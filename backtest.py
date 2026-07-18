@@ -5,8 +5,8 @@ from psycopg2.extras import execute_values
 DB_CONFIG = {
     'host': 'localhost',
     'database': 'trading',
-    'user': 'yourname',
-    'password': 'yourpass'
+    'user': 'flexx',
+    'password': 'mulla'
 }
 
 CSV_PATH = '/storage/emulated/0/Download/1ohlc_15m.csv'
