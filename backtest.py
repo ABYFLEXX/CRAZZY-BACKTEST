@@ -1,5 +1,6 @@
 import pandas as pd
 import psycopg2
+import os
 from psycopg2.extras import execute_values
 
 DB_CONFIG = {
@@ -9,7 +10,7 @@ DB_CONFIG = {
     'password': 'mulla'
 }
 
-CSV_PATH = '/storage/emulated/0/Download/1ohlc_15m.csv'
+CSV_PATH = os.path.expanduser('~/storage/shared/Download/1ohlc_15m.csv')
 
 def load_csv_to_db():
     df = pd.read_csv(CSV_PATH, parse_dates=['timestamp'])
