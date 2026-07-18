@@ -17,7 +17,7 @@ def load_csv_to_db():
     df = pd.read_csv(CSV_PATH)
     
     values = df['Timestamp'].tolist()
-    df['Timestamp'] = [datetime.strptime(v[:19], '%Y-%m-%d %H:%M:%S') for v in values]
+    df['Timestamp'] = pd.Series([datetime.strptime(v[:19], '%Y-%m-%d %H:%M:%S') for v in values], dtype=object)
     df = df.rename(columns={'Timestamp': 'timestamp', 'market_open': 'volume'})
     
     conn = psycopg2.connect(**DB_CONFIG)
