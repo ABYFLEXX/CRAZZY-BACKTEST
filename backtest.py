@@ -2,6 +2,7 @@ import pandas as pd
 import psycopg2
 import os
 from psycopg2.extras import execute_values
+from datetime import datetime
 
 DB_CONFIG = {
     'host': 'localhost',
@@ -13,7 +14,11 @@ DB_CONFIG = {
 CSV_PATH = os.path.expanduser('~/storage/shared/Download/1ohlc_15m.csv')
 
 def load_csv_to_db():
-    df = pd.read_csv(CSV_PATH, parse_dates=['Timestamp'])
+    df = pd.read_csv(CSV_PATH)
+    
+    values = df['Timestamp'].tolist()
+    df['Timestamp'] = [datetime.strptime(v[:19], '%Y-%m-%d %H:%M:%S') for v in values]
+    df = df.rename(columns={'Timestamp': 'timestamp', 'market_open': 'volume'})
     
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
