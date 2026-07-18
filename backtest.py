@@ -13,7 +13,7 @@ DB_CONFIG = {
 CSV_PATH = os.path.expanduser('~/storage/shared/Download/1ohlc_15m.csv')
 
 def load_csv_to_db():
-    df = pd.read_csv(CSV_PATH, parse_dates=['timestamp'])
+    df = pd.read_csv(CSV_PATH, parse_dates=['Timestamp'])
     
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
