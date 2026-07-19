@@ -2,22 +2,21 @@ import pandas as pd
 import psycopg2
 import os
 from psycopg2.extras import execute_values
-from datetime import datetime
 
 DB_CONFIG = {
-    'host': 'localhost',
-    'database': 'trading',
-    'user': 'flexx',
-    'password': 'mulla'
+    'host': os.environ.get('DB_HOST', 'localhost'),
+    'database': os.environ.get('DB_NAME', 'trading'),
+    'user': os.environ.get('DB_USER', 'flexx'),
+    'password': os.environ.get('DB_PASSWORD'),
 }
 
 CSV_PATH = os.path.expanduser('~/storage/shared/Download/1ohlc_15m.csv')
 
+
 def load_csv_to_db():
     df = pd.read_csv(CSV_PATH)
 
-    values = df['Timestamp'].tolist()
-    df['Timestamp'] = pd.Series([datetime.strptime(v[:19], '%Y-%m-%d %H:%M:%S') for v in values], dtype=object)
+    df['Timestamp'] = pd.to_datetime(df['Timestamp'], utc=True)
     df = df.rename(columns={'Timestamp': 'timestamp'})
 
     conn = psycopg2.connect(**DB_CONFIG)
@@ -25,7 +24,7 @@ def load_csv_to_db():
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS ohlcv_15m (
-            timestamp TIMESTAMP PRIMARY KEY,
+            timestamp TIMESTAMPTZ PRIMARY KEY,
             open NUMERIC,
             high NUMERIC,
             low NUMERIC,
@@ -43,6 +42,7 @@ def load_csv_to_db():
     cur.close()
     conn.close()
     print(f"Loaded {len(df)} rows into PostgreSQL")
+
 
 if __name__ == '__main__':
     load_csv_to_db()
